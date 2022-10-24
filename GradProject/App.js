@@ -109,7 +109,7 @@ export default function App() {
             component={Account}
             options={{
               title: 'Account',
-              tabBarLabel: 'Account',
+              tabBarLabel: 'Acco unt',
               tabBarIcon: ({ color, size }) => (
                 <Ionicons name="person" size={size} color={color} />
               ),
