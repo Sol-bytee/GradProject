@@ -4,14 +4,15 @@ import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { Fontisto } from '@expo/vector-icons'; 
-import HallList from "../components/common/HallList";
 
+import HallList from "../components/common/HallList";
+import { HALLS } from '../data/dummy-data';
 
 function Home({navigation, route}){
-    const [enteredHall, setEnteredHall] = useState([{id: 1, title: 'Al WOROD', price: 20000, guests: 20},{id: 2, title: 'Al ZOMRD', price: 22000, guests: 35}]);
-    let sort = false
+    const [enteredHall, setEnteredHall] = useState(HALLS);
+
     function sortHandler(){
-        navigation.navigate('HomeSort',{sort});
+        navigation.navigate('HomeSort');
     }
     function FilterHandler(){
         navigation.navigate('HomeFilter');
@@ -21,20 +22,32 @@ function Home({navigation, route}){
     }
     useEffect(() => {
         if (route.params?.highPrice) {
-            setEnteredHall([{id: 2, title: 'Al ZOMRD', price: 22000, guests: 35},{id: 1, title: 'Al WOROD', price: 20000, guests: 20}]);
+            const highPriceHalls = enteredHall.sort((a, b) => {
+                return b.price - a.price;
+            });
+            //console.log(highPriceHalls[0].price, highPriceHalls[1].price, highPriceHalls[2].price);
+            setEnteredHall(highPriceHalls);
         }
         else if (route.params?.lowPrice) {
-            setEnteredHall([{id: 1, title: 'Al WOROD', price: 20000, guests: 20},{id: 2, title: 'Al ZOMRD', price: 22000, guests: 35}]);
-            console.log('hi');
+            const lowPriceHalls = enteredHall.sort((a, b) => {
+                return a.price - b.price;
+            });
+            setEnteredHall(lowPriceHalls);
         }
 
         if (route.params?.highGuest) {
-            setEnteredHall([{id: 2, title: 'Al ZOMRD', price: 22000, guests: 35},{id: 1, title: 'Al WOROD', price: 20000, guests: 20}]);
+            const highGuestHalls = enteredHall.sort((a, b) => {
+                return b.guests - a.guests;
+            });
+            setEnteredHall(highGuestHalls);
         }
         else if (route.params?.lowGuest) {
-            setEnteredHall([{id: 1, title: 'Al WOROD', price: 20000, guests: 20},{id: 2, title: 'Al ZOMRD', price: 22000, guests: 35}]);
+            const lowGuestHalls = enteredHall.sort((a, b) => {
+                return a.guests - b.guests;
+            });
+            setEnteredHall(lowGuestHalls);
         }
-    }, [route.params?.highPrice, route.params?.highGuest]);
+    }, [route.params?.highPrice, route.params?.lowPriceHalls, route.params?.highGuest, route.params?.lowGuest, enteredHall]);
     
 
     
