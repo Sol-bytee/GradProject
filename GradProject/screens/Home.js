@@ -1,157 +1,143 @@
-import { useEffect, useState } from "react";
-import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
+import { View, Text, Button, StyleSheet } from "react-native";
+import { useState } from "react";
+import Checkbox from 'expo-checkbox';
 
-import { Ionicons } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons'; 
-import { Fontisto } from '@expo/vector-icons'; 
+const initialState = {
+    highPrice: false,
+    lowPrice: false,
+    highGuest: false,
+    lowGuest: false,
+};
+function HomeSort({navigation}){
+    const [state, setState] = useState(initialState);
+    const [toggleButton, setToggleButton] = useState(false);
 
-import HallList from "../components/common/HallList";
-import { HALLS } from '../data/dummy-data';
-
-function Home({navigation, route}){
-    const [enteredHall, setEnteredHall] = useState(HALLS);
-
-    function sortHandler(){
-        navigation.navigate('HomeSort');
+    function onPressHandler(){
+        navigation.navigate({
+            name: 'Home',
+            params: { 
+                highPrice: state.highPrice,
+                lowPrice: state.lowPrice,
+                highGuest: state.highGuest,
+                lowGuest: state.lowGuest,
+            },
+            merge: true,
+        });
     }
-    function FilterHandler(){
-        navigation.navigate('HomeFilter');
-    }
-    function DateHandler(){
-        navigation.navigate('HomeDate');
-    }
-    useEffect(() => {
-        if (route.params?.highPrice) {
-            const highPriceHalls = enteredHall.sort((a, b) => {
-                return b.price - a.price;
-            });
-            //console.log(highPriceHalls[0].price, highPriceHalls[1].price, highPriceHalls[2].price);
-            setEnteredHall(highPriceHalls);
-        }
-        else if (route.params?.lowPrice) {
-            const lowPriceHalls = enteredHall.sort((a, b) => {
-                return a.price - b.price;
-            });
-            setEnteredHall(lowPriceHalls);
-        }
-
-        if (route.params?.highGuest) {
-            const highGuestHalls = enteredHall.sort((a, b) => {
-                return b.guests - a.guests;
-            });
-            setEnteredHall(highGuestHalls);
-        }
-        else if (route.params?.lowGuest) {
-            const lowGuestHalls = enteredHall.sort((a, b) => {
-                return a.guests - b.guests;
-            });
-            setEnteredHall(lowGuestHalls);
-        }
-    }, [route.params?.highPrice, route.params?.lowPriceHalls, route.params?.highGuest, route.params?.lowGuest, enteredHall]);
     
-
-    
-
     return(
         <View style={styles.container}>
-
-            <View style={styles.searchBar}>
-
-                <View style={styles.searchBar1}>
-                    <TextInput style={styles.search}/>
-                    <Ionicons style={styles.map} name="map" size='30' color='#6A2B81' />
+            <View style={styles.titleContainer}>
+                <Text style={styles.title}>Hall Sort</Text>
+            </View>
+            <View style={styles.checkContainer}>
+                <Text style={styles.checkTitle}>Price:</Text>
+                <View style={styles.checkboxContainer}>
+                    <Checkbox
+                        style={styles.checkbox}
+                        value={state.highPrice}
+                        disabled={state.lowPrice}
+                        onValueChange={value =>
+                            setState({
+                                ...state,
+                                highPrice: value,
+                                lowPrice: !value,
+                            })
+                        }
+                    />
+                    <Text style={styles.checkboxName}>High</Text>
+                </View>
+                <View style={styles.checkboxContainer}>
+                    <Checkbox
+                        style={styles.checkbox}
+                        value={state.lowPrice}
+                        disabled={state.highPrice}
+                        onValueChange={value =>
+                            setState({
+                                ...state,
+                                lowPrice: value,
+                                highPrice: !value,
+                            })
+                        }
+                    />
+                    <Text style={styles.checkboxName}>Low</Text>
                 </View>
 
-                <View style={styles.searchBar2}>
-                    <Pressable 
-                        style={({pressed}) => (pressed ? styles.button : null)} 
-                        onPress={sortHandler}
-                    >
-                        <View style={styles.icon}>
-                            <MaterialCommunityIcons name="sort" size={30} color="#6A2B81" />
-                            <Text>sort</Text>
-                        </View>
-                    </Pressable>
-                    <Pressable 
-                        style={({pressed}) => (pressed ? styles.button : null)}
-                        onPress={FilterHandler} 
-                    >
-                        <View style={styles.icon}>
-                            <MaterialCommunityIcons name="filter" size={30} color="#6A2B81" />
-                            <Text>Filter</Text>
-                        </View>
-                    </Pressable>
-                    <Pressable 
-                        style={({pressed}) => (pressed ? styles.button : null)}
-                        onPress={DateHandler} 
-                    >                        
-                        <View style={styles.icon}>
-                            <Fontisto name="date" size={30} color="#6A2B81" />
-                            <Text> Date</Text>
-                        </View>
-                    </Pressable>
+                <Text style={styles.checkTitle}>Gusets:</Text>
+                <View style={styles.checkboxContainer}>
+                    <Checkbox
+                        style={styles.checkbox}
+                        value={state.highGuest}
+                        disabled={state.lowGuest}
+                        onValueChange={value =>
+                            setState({
+                                ...state,
+                                highGuest: value,
+                                lowGuest: !value,
+                            })
+                        }
+                    />
+                    <Text style={styles.checkboxName}>High</Text>
                 </View>
-
+                <View style={styles.checkboxContainer}>
+                    <Checkbox
+                        style={styles.checkbox}
+                        value={state.lowGuest}
+                        disabled={state.highGuest}
+                        onValueChange={value =>
+                            setState({
+                                ...state,
+                                lowGuest: value,
+                                highGuest: !value,
+                            })
+                        }
+                    />
+                    <Text style={styles.checkboxName}>Low</Text>
+                </View>
             </View>
-
-            <View style={styles.hallContainer}>
-                <HallList Halls={enteredHall}/>
-            </View>
+            <Button
+                onPress={onPressHandler}
+                title="Save"
+            />
         </View>
     );
 }
 
-export default Home;
+export default HomeSort;
 
 const styles = StyleSheet.create({
     container:{
         flex: 1,
+        marginTop: 80,
     },
-    searchBar:{
-      flex: 1,
-      margin: 12,
+    titleContainer:{
+        borderBottomWidth: 1,
+        paddingBottom: 6,
+        marginHorizontal: 30,
     },
-    searchBar1:{
-        backgroundColor:'#E8E8E8',
-        borderTopLeftRadius: 8,
-        borderTopRightRadius: 8,
-        flex: 1,
+    title:{
+        fontSize:30,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        borderBottomWidth: 2,
+    },
+    checkContainer:{
+        marginTop: 32,
+        marginLeft: 4,
+    },
+    checkTitle:{
+        fontSize:18,
+        fontWeight: 'bold',
+    },
+    checkboxContainer:{
         flexDirection: 'row',
+        alignItems: 'center'
     },
-    search:{
-        flex: 6,
-        borderWidth: 1,
-        borderRadius: 8,
-        margin: 12,
-        shadowColor: 'black',
-        shadowOffset:{width: 0, height: 2},
-        shadowRadius: 6,
-        shadowOpacity: 0.25
+    checkbox:{
+        marginHorizontal: 6,
+        marginVertical: 6,
     },
-    map:{
-        flex: 1,
-        marginTop: 14,
+    checkboxName:{
+        fontSize:16,
     },
-    searchBar2:{
-        backgroundColor: '#ECECEC',
-        borderBottomLeftRadius: 8,
-        borderBottomRightRadius: 8,
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 6,
-    },
-    button:{
-        opacity: 0.6,
-    },
-    icon:{
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    hallContainer:{
-        flex: 3,
-        alignItems: 'center',
-      },
-  });
-  
+});
