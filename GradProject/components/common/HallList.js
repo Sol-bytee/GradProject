@@ -1,8 +1,18 @@
-import { View, FlatList, StyleSheet } from 'react-native';
+import { useState,useCallback } from "react";
+import { View, FlatList, RefreshControl, StyleSheet } from 'react-native';
 
 import HallView from "./HallView";
 
+const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+}
+
 function HallList({Halls}){
+    const [refreshing, setRefreshing] = useState(false);
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        wait(500).then(() => setRefreshing(false));
+    }, []);
     
     //كل اكله لها عنصر
     function renderHallInfo(itemData){
@@ -10,7 +20,7 @@ function HallList({Halls}){
         const item = itemData.item;
         const hallInfoProps ={
             id: item.id, //هذا عشان نعرف ايدي الاكله اللي بننتقل لها بعدين
-            title: item.title,
+            name: item.name,
             price: item.price,
             guests: item.guests
         };
@@ -27,6 +37,12 @@ function HallList({Halls}){
                 data={Halls}
                 keyExtractor={(item) => item.id}
                 renderItem={renderHallInfo}
+                refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
+                    />
+                }
             />
         </View>
     );
