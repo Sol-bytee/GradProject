@@ -1,6 +1,7 @@
 import Hall from '../models/Hall';
 
 export const HALLS = [
+
   new Hall(
     1, 
     'AL SAMA', 
